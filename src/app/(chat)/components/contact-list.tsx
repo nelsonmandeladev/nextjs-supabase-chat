@@ -1,8 +1,6 @@
 "use client";
 
-import { ScrollArea } from "@/components/ui/scroll-area";
-import { Avatar } from "@/components/ui/avatar";
-import { Button } from "@/components/ui/button";
+import { ScrollArea, Avatar, Button, AvatarImage, AvatarFallback } from "@/components";
 import { MessageSquare } from "lucide-react";
 
 const contacts = [
@@ -26,26 +24,27 @@ const contacts = [
 export default function ContactList() {
   return (
     <ScrollArea className="flex-1">
-      <div className="space-y-1 p-2">
+      <div className="space-y-4">
         {contacts.map((contact) => (
           <div
             key={contact.id}
-            className="flex items-center gap-3 rounded-lg p-3 cursor-pointer transition-colors hover:bg-zinc-100"
+            className="flex items-center gap-3 rounded-lg cursor-pointer transition-colors group"
           >
             <div className="relative">
               <Avatar className="h-12 w-12">
-                <img src={contact.avatar} alt={contact.name} className="object-cover" />
+                <AvatarImage src={contact.avatar} />
+                <AvatarFallback>SW</AvatarFallback>
               </Avatar>
               {contact.online && (
                 <span className="absolute bottom-0 right-0 h-3 w-3 rounded-full border-2 border-white bg-emerald-500" />
               )}
             </div>
             <div className="flex-1">
-              <h3 className="font-semibold text-zinc-900">{contact.name}</h3>
-              <p className="text-sm text-zinc-600">{contact.status}</p>
+              <h2 className="font-medium text-slate-600 text-sm group-hover:text-blue-600 transition-colors duration-300">{contact.name}</h2>
+              <p className="text-xs text-slate-400">{contact.status}</p>
             </div>
             <Button size="icon" variant="ghost">
-              <MessageSquare className="h-4 w-4" />
+              <MessageSquare className="size-6 stroke-[1px]" />
             </Button>
           </div>
         ))}

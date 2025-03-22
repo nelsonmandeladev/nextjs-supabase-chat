@@ -1,36 +1,9 @@
-"use client";
-
-import { useState } from "react";
 import { Button, Input, Label } from "@/components";
+import { login } from "@/lib";
 import { MessageSquare } from "lucide-react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { useAuth } from "@/hooks/use-auth";
-import { toast } from "sonner";
 
 export default function LoginPage() {
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
-  const { login } = useAuth()
-  const router = useRouter()
-
-  const handleLogin = async (e: React.FormEvent) => {
-    e.preventDefault()
-    try {
-      const { error } = await login(email, password)
-      
-      if (error) {
-        toast.error(error.message)
-        return
-      }
-
-      toast.success('Login successful!')
-      router.push('/')
-    } catch (err) {
-      console.log(err)
-      toast.error('Login failed. Please try again.')
-    }
-  }
 
 
   // ... existing code ...
@@ -46,16 +19,17 @@ export default function LoginPage() {
             <p className="text-zinc-600 mt-2">Sign in to continue to Chat</p>
           </div>
 
-          <form onSubmit={handleLogin} className="space-y-6">
+          <form
+            className="space-y-6"
+          >
             <div className="space-y-2">
               <Label htmlFor="email">Email address</Label>
               <Input
                 id="email"
                 type="email"
                 placeholder="name@example.com"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
                 className="h-12"
+                name="email"
               />
             </div>
 
@@ -67,15 +41,15 @@ export default function LoginPage() {
                 id="password"
                 type="password"
                 placeholder="••••••••"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
                 className="h-12"
+                name="password"
               />
             </div>
 
-            <Button type="submit" className="w-full h-12 text-base">
+            <Button formAction={login} type="submit" className="w-full h-12 text-base">
               Sign in
             </Button>
+
           </form>
 
           <p className="text-center text-zinc-600 text-sm mt-8">

@@ -1,40 +1,8 @@
-"use client";
-
-import { useState } from "react";
 import { Button, Input, Label } from "@/components";
+import { signup } from "@/lib";
 import { MessageSquare } from "lucide-react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { useAuth } from "@/hooks";
 export default function RegisterPage() {
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [error, setError] = useState<string | null>(null);
-  const [message, setMessage] = useState<string | null>(null);
-  const router = useRouter();
-  const { signup } = useAuth();
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    
-    if (password.length < 8) {
-      setError("Password must be at least 8 characters long");
-      return;
-    }
-
-    const { error } = await signup(email, password, name);
-
-    if (error) {
-      setError(error.message);
-      return;
-    }
-
-    setMessage("Check your email for the confirmation link.");
-    setTimeout(() => {
-      router.push('/login');
-    }, 2000);
-  };
 
   return (
     <div className="min-h-screen bg-zinc-50 flex items-center justify-center p-4">
@@ -48,27 +16,14 @@ export default function RegisterPage() {
             <p className="text-zinc-600 mt-2">Get started with Chat</p>
           </div>
 
-          <form onSubmit={handleSubmit} className="space-y-6">
-            <div className="space-y-2">
-              <Label htmlFor="name">Full name</Label>
-              <Input
-                id="name"
-                type="text"
-                placeholder="John Doe"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                className="h-12"
-              />
-            </div>
-
+          <form className="space-y-6">
             <div className="space-y-2">
               <Label htmlFor="email">Email address</Label>
               <Input
                 id="email"
                 type="email"
                 placeholder="name@example.com"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                name="email"
                 className="h-12"
               />
             </div>
@@ -79,8 +34,7 @@ export default function RegisterPage() {
                 id="password"
                 type="password"
                 placeholder="••••••••"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
+                name="password"
                 className="h-12"
               />
               <p className="text-xs text-zinc-500">
@@ -88,15 +42,7 @@ export default function RegisterPage() {
               </p>
             </div>
 
-            {error && (
-              <p className="text-sm text-red-600 text-center">{error}</p>
-            )}
-
-            {message && (
-              <p className="text-sm text-green-600 text-center">{message}</p>
-            )}
-
-            <Button type="submit" className="w-full h-12 text-base">
+            <Button formAction={signup} type="submit" className="w-full h-12 text-base">
               Create account
             </Button>
           </form>

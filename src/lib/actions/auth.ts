@@ -1,55 +1,45 @@
-import { createServerSupabaseClient } from '../supabase/server'
+'use server'
+
 import { revalidatePath } from 'next/cache'
+import { redirect } from 'next/navigation'
 
-export async function signUp(formData: FormData) {
-  const supabase = createServerSupabaseClient()
-  
-  const email = formData.get('email') as string
-  const password = formData.get('password') as string
-  
-  const { error } = await supabase.auth.signUp({
-    email,
-    password,
-    options: {
-      emailRedirectTo: `${process.env.NEXT_PUBLIC_SITE_URL}/auth/callback`,
-    },
-  })
+import { serverClient } from '@/lib'
 
-  if (error) {
-    return { error: error.message }
+export async function login(formData: FormData) {
+  const supabase = await serverClient()
+
+  const data = {
+    email: formData.get('email') as string,
+    password: formData.get('password') as string,
   }
 
-  revalidatePath('/')
-  return { success: true }
+  const { error } = await supabase.auth.signInWithPassword(data)
+
+  if (error) {
+    redirect('/error')
+  }
+
+  revalidatePath('/', 'layout')
+  redirect('/')
 }
 
-export async function signIn(formData: FormData) {
-  const supabase = createServerSupabaseClient()
-  
-  const email = formData.get('email') as string
-  const password = formData.get('password') as string
-  
-  const { error } = await supabase.auth.signInWithPassword({
-    email,
-    password,
-  })
+export async function signup(formData: FormData) {
+  const supabase = await serverClient()
+
+  // type-casting here for convenience
+  // in practice, you should validate your inputs
+  const data = {
+    email: formData.get('email') as string,
+    password: formData.get('password') as string,
+  }
+  console.log(data)
+
+  const { error } = await supabase.auth.signUp(data)
 
   if (error) {
-    return { error: error.message }
+    redirect('/error')
   }
 
-  revalidatePath('/')
-  return { success: true }
+  revalidatePath('/', 'layout')
+  redirect('/')
 }
-
-export async function signOut() {
-  const supabase = createServerSupabaseClient()
-  const { error } = await supabase.auth.signOut()
-  
-  if (error) {
-    return { error: error.message }
-  }
-
-  revalidatePath('/')
-  return { success: true }
-} 

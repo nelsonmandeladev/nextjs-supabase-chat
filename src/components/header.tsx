@@ -6,7 +6,7 @@ import { LogOut } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 interface HeaderProps {
-  user: User;
+  user?: User;
 }
 
 export function Header({ user }: HeaderProps) {
@@ -14,7 +14,7 @@ export function Header({ user }: HeaderProps) {
   const supabase = createClientComponentClient();
 
   return (
-    <div className="flex items-center justify-between px-4 py-2 border-b mb-4">
+    <div className="flex items-center justify-between px-4 py-2 border-b mb-4 bg-white rounded-lg shadow shadow-zinc-200">
       <div className=""></div>
       <div className="flex items-center gap-2">
         <Avatar className="size-10">
