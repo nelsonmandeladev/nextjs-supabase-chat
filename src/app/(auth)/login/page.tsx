@@ -1,12 +1,39 @@
+"use client"
+
 import { Button, Input, Label } from "@/components";
 import { login } from "@/lib";
 import { MessageSquare } from "lucide-react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useTransition } from "react";
+import { toast } from "sonner"
+
 
 export default function LoginPage() {
 
+  const [isPending, startTransition] = useTransition();
+  const router = useRouter();
 
-  // ... existing code ...
+  function handleLogin(event: React.FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    const formData = new FormData(event.currentTarget);
+    const data = {
+      email: formData.get('email') as string,
+      password: formData.get('password') as string,
+    }
+
+    startTransition(async () => {
+      const response = await login(data);
+
+      if (response.data.session) {
+        toast.success("Logged in successfully");
+        router.push("/");
+      } else {
+        toast.error(response.error?.message || "An error occurred", { position: "top-right" });
+      }
+    });
+  }
+
   return (
     <div className="min-h-screen bg-zinc-50 flex items-center justify-center p-4">
       <div className="w-full max-w-md">
@@ -21,6 +48,7 @@ export default function LoginPage() {
 
           <form
             className="space-y-6"
+            onSubmit={handleLogin}
           >
             <div className="space-y-2">
               <Label htmlFor="email">Email address</Label>
@@ -46,7 +74,11 @@ export default function LoginPage() {
               />
             </div>
 
-            <Button formAction={login} type="submit" className="w-full h-12 text-base">
+            <Button
+              type="submit"
+              className="w-full h-12 text-base"
+              disabled={isPending}
+            >
               Sign in
             </Button>
 

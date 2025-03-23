@@ -1,6 +1,6 @@
 
 "use client";
-import React from 'react'
+import React, { useTransition } from 'react'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -9,13 +9,20 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
   Button
-
 } from "@/components";
 import { Ellipsis, LogOut } from "lucide-react";
-import { useRouter } from "next/navigation";
+import { singUut } from '@/lib';
+import { toast } from 'sonner';
 
 export function UserMenu() {
-  const router = useRouter();
+  const [isPending, startTransition] = useTransition();
+
+  function handleSignOut() {
+    startTransition(async () => {
+      const response = await singUut();
+      toast.error(response.error?.message ?? "An error occurred while signing out. Please try again")
+    })
+  }
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -36,8 +43,9 @@ export function UserMenu() {
         <DropdownMenuSeparator />
         <DropdownMenuItem>Settings</DropdownMenuItem>
         <DropdownMenuItem
+          disabled={isPending}
           onClick={() => {
-            router.push("/login");
+            handleSignOut();
           }}
         >
           Logout

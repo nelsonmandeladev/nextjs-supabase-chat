@@ -1,25 +1,45 @@
 "use client";
 
 import React, { useState } from 'react';
-import { Avatar, AvatarFallback, AvatarImage, Button, Input, UserMenu, ScrollArea } from "@/components";
+import {
+  Avatar,
+  AvatarFallback,
+  // AvatarImage,
+  Button,
+  Input,
+  UserMenu,
+  ScrollArea
+} from "@/components";
 import { MessageSquare, Users } from "lucide-react";
 import { cn } from "@/lib/utils";
 import ChatList from "./chat-list";
 import ContactList from "./contact-list";
+import { UserResponse } from '@supabase/supabase-js';
 
-export function ChatSidebar() {
+interface ChatSidebarProps {
+  user: UserResponse;
+}
+
+export function ChatSidebar(props: ChatSidebarProps) {
   const [view, setView] = useState<"chats" | "contacts">("chats");
+  const { user } = props;
   return (
     <div className="w-full h-full flex flex-col bg-white rounded-lg p-0 md:p-4 gap-5">
       <div className="flex items-center justify-between gap-3 p-4 md:p-0">
         <div className="flex items-center gap-3">
           <Avatar className="h-10 w-10">
-            <AvatarImage src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=64&h=64&fit=crop&crop=faces" />
-            <AvatarFallback>SW</AvatarFallback>
+            {/* <AvatarImage src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=64&h=64&fit=crop&crop=faces" /> */}
+            <AvatarFallback className='uppercase'>
+              {user.data.user?.user_metadata.first_name.charAt(0)}{user.data.user?.user_metadata.last_name.charAt(0)}
+            </AvatarFallback>
           </Avatar>
           <div>
-            <h2 className="font-semibold text-sm text-slate-600">Sarah Wilson</h2>
-            <p className="text-xs text-slate-400">The best way to reach me</p>
+            <h2 className="font-semibold text-sm text-slate-600">
+              {user.data.user?.user_metadata.first_name} {user.data.user?.user_metadata.last_name}
+            </h2>
+            <p className="text-xs text-slate-400">
+              {user.data.user?.email}
+            </p>
           </div>
         </div>
         <UserMenu />

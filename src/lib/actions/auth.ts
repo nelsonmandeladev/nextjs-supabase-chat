@@ -1,45 +1,43 @@
-'use server'
-
-import { revalidatePath } from 'next/cache'
-import { redirect } from 'next/navigation'
+'use server';
 
 import { serverClient } from '@/lib'
+import { EmailOtpType, SignInWithPasswordCredentials, SignUpWithPasswordCredentials } from '@supabase/supabase-js'
+import { revalidatePath } from 'next/cache';
+import { redirect } from 'next/navigation';
 
-export async function login(formData: FormData) {
+export async function login(data: SignInWithPasswordCredentials) {
   const supabase = await serverClient()
 
-  const data = {
-    email: formData.get('email') as string,
-    password: formData.get('password') as string,
-  }
+return await supabase.auth.signInWithPassword(data);
 
-  const { error } = await supabase.auth.signInWithPassword(data)
-
-  if (error) {
-    redirect('/error')
-  }
-
-  revalidatePath('/', 'layout')
-  redirect('/')
 }
 
-export async function signup(formData: FormData) {
+export async function signup(data: SignUpWithPasswordCredentials) {
   const supabase = await serverClient()
+  return await supabase.auth.signUp(data);
+}
 
-  // type-casting here for convenience
-  // in practice, you should validate your inputs
-  const data = {
-    email: formData.get('email') as string,
-    password: formData.get('password') as string,
+export async function verifyOtp({ token_hash, type, next = '/' }: { token_hash: string; type: EmailOtpType; next?: string }) {
+  const supabase = await serverClient()
+  
+  const { error } = await supabase.auth.verifyOtp({
+    type,
+    token_hash,
+  })
+
+  if (!error) {
+    redirect(next)
   }
-  console.log(data)
 
-  const { error } = await supabase.auth.signUp(data)
+  redirect('/confirm-error')
+}
 
-  if (error) {
-    redirect('/error')
+export async function singUut() {
+  const supabase = await serverClient();
+  const response = await supabase.auth.signOut();
+
+  if (!response.error) {
+    revalidatePath("/")
   }
-
-  revalidatePath('/', 'layout')
-  redirect('/')
+  return response;
 }
