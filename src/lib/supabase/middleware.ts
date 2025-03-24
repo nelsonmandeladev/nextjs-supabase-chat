@@ -38,9 +38,9 @@ export async function updateSession(request: NextRequest) {
   } = await supabase.auth.getUser();
 
   if (user && 
-    request.nextUrl.pathname.startsWith("/login") ||
-    request.nextUrl.pathname.startsWith("/register") ||
-    request.nextUrl.pathname.startsWith("/confirm") ||
+    request.nextUrl.pathname.startsWith("/login") &&
+    request.nextUrl.pathname.startsWith("/register") &&
+    request.nextUrl.pathname.startsWith("/confirm") &&
     request.nextUrl.pathname.startsWith("/confirm-error")
 
   ) {

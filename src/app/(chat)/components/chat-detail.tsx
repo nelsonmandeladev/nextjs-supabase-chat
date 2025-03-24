@@ -5,6 +5,7 @@ import { ScrollArea, Avatar, AvatarImage, AvatarFallback, Button, Input, ScrollB
 import { cn } from "@/lib/utils";
 import { Smile, PaperclipIcon, Send } from "lucide-react";
 import { ChatSidebarMobile } from "./chat-sidebar-mobile";
+import { UserResponse } from "@supabase/supabase-js";
 
 const messagesBase = [
   {
@@ -101,10 +102,16 @@ function groupMessagesBySender(messages: Message[]): Message[][] {
   }, []);
 }
 
-export default function ChatDetail() {
+
+interface ChatDetailProps {
+  me: UserResponse;
+}
+
+export default function ChatDetail(props: ChatDetailProps) {
   const scrollRef = useRef<HTMLDivElement>(null);
   const [messages, setMessages] = useState<Message[]>([]);
   const [message, setMessage] = useState<string>("");
+  const { me } = props;
 
   // Load initial messages on mount
   useEffect(() => {
@@ -145,7 +152,7 @@ export default function ChatDetail() {
               <p className="text-xs text-slate-400">Online • Typing...</p>
             </div>
           </div>
-          <ChatSidebarMobile />
+          <ChatSidebarMobile user={me} />
         </div>
       </div>
 

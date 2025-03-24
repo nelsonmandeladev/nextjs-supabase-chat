@@ -8,7 +8,13 @@ import {
 } from "@/components"
 import { MessageCircleMore } from "lucide-react";
 import { ChatSidebar } from "./chat-sidebar";
-export function ChatSidebarMobile() {
+import { UserResponse } from "@supabase/supabase-js";
+
+interface ChatSidebarMobileProps {
+  user: UserResponse;
+}
+export function ChatSidebarMobile(props: ChatSidebarMobileProps) {
+  const { user } = props;
   return (
     <Drawer>
       <DrawerTrigger
@@ -23,7 +29,7 @@ export function ChatSidebarMobile() {
           <DrawerTitle></DrawerTitle>
           <DrawerDescription></DrawerDescription>
         </DrawerHeader>
-        <ChatSidebar />
+        <ChatSidebar user={user} />
       </DrawerContent>
     </Drawer>
   )
