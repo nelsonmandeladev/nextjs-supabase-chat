@@ -41,3 +41,22 @@ export async function singUut() {
   }
   return response;
 }
+
+export const getCurrentPublicUsers = async () => {
+  const supabase = await serverClient()
+     const user = await supabase.auth.getUser();
+  const userData = user.data.user;
+
+  const { data: users, error } = await supabase
+    .from('auth.users')
+    .select('id, email, raw_user_meta_data')
+    .eq('raw_user_meta_data->public_profile', true)
+    .neq('id', userData?.id);
+    
+  if (error) {
+    console.error('Error fetching public users:', error);
+    return [];
+  }
+  
+  return users;
+};
